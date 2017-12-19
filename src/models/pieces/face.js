@@ -1,3 +1,4 @@
-var Face = {
-    hasBeard: false
+var Face = function (hasBeard, hasHumongousNose) {
+    this.hasBeard = hasBeard;
+    this.hasHumongousNose = hasHumongousNose;
 };
