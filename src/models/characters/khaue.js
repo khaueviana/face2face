@@ -1,4 +1,4 @@
-var khaue = new Character();
+var khaue = Object.create(Character);
 khaue.name = "Khauê";
 khaue.gender = Gender.male;
 khaue.face = new Face(false, true);

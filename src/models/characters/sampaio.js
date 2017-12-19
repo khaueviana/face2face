@@ -1,4 +1,4 @@
-var sampaio = new Character();
+var sampaio = Object.create(Character);
 sampaio.name = "Sampaio";
 sampaio.gender = Gender.male;
 sampaio.face = new Face(true);

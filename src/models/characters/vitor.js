@@ -1,4 +1,4 @@
-var vitor = new Character();
+var vitor = Object.create(Character);
 vitor.name = "Vítor";
 vitor.gender = Gender.male;
 vitor.face = new Face(false);

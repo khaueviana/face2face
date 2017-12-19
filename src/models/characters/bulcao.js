@@ -1,4 +1,4 @@
-var bulcao = new Character();
+var bulcao = Object.create(Character);
 bulcao.name = "Bulcão";
 bulcao.gender = Gender.male;
 bulcao.face = new Face(false);
