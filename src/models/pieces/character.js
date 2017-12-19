@@ -1,7 +1,8 @@
 var Character = {
+    name: "",
     gender: {},
     face: {},
     hair: {},
     eyeColor: {},
-    accessory: {}
+    accessories: []
 };

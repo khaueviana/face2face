@@ -1,0 +1,3 @@
+var Face = {
+    hasBeard: false
+};
