@@ -1,4 +1,5 @@
 var Character = {
+    name: "",
     gender: {},
     face: {},
     hair: {},
