@@ -3,5 +3,5 @@ var Character = {
     face: {},
     hair: {},
     eyeColor: {},
-    accessory: {}
+    accessories: []
 };
