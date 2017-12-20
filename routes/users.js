@@ -4,19 +4,19 @@ var router = express.Router();
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
 
-/* GET users listing. */
 router.get('/', function(req, res, next) {
   User.find().then(function(user){
     return res.send(user);
-  }).catch(next);
+  }).catch(function(e) {
+    return res.sendStatus(404);
+  });
 });
 
 router.get('/getById/:id', function(req, res, next) {
   User.findById(req.params.id).then(function(user) {
     return res.send(user);
   }).catch(function(e) {
-    console.log(e);
-    return res.send('Not Found');
+    return res.sendStatus(404);
   });
 });
 
@@ -29,8 +29,7 @@ router.post('/create', function(req, res, next) {
   return user.save().then(function(){
     return res.sendStatus(200);
   }).catch(function(e) {
-    console.log(e);
-    return res.send('Error while creating user.');
+    return res.sendStatus(404);
   });
 });
 
