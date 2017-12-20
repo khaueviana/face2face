@@ -9,6 +9,8 @@ var options = {
   };
 
   var uri = "mongodb://face2face:sohosarrombados@tnis6.mongodb.net:27017/concrete-shard-0";
+
+  var mongoose = require('mongoose');
   mongoose.connect(uri, options);
 
 var userSchema = new mongoose.Schema({
