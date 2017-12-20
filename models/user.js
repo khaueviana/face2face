@@ -6,4 +6,5 @@ var userSchema = new mongoose.Schema({
     password: String
 }, { timestamps: true } );
 
-mongoose.model("User", userSchema);
+var user = mongoose.model("User", userSchema);
+module.exports = user;
