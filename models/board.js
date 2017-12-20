@@ -1,6 +1,7 @@
 var CharacterFrame = require('./../models/pieces/characterFrame');
-var BoardPosition = require('./../models/pieces/boardPosition');
+var BoardCoordinates = require('./../models/pieces/boardCoordinates');
 var characters = require("./../models/characters/");
+var MathHelper = require("./../helpers/math");
 
 var Board = {
     characterFrames: [],
@@ -13,20 +14,17 @@ var Board = {
     },
 
     fillCharacterFrames: function () {
-        this.characterFrames.push(new CharacterFrame(characters.bulcao, new BoardPosition(0, 0)));
-        this.characterFrames.push(new CharacterFrame(characters.khaue, new BoardPosition(1, 0)));
-        this.characterFrames.push(new CharacterFrame(characters.marcelo, new BoardPosition(2, 0)));
-        this.characterFrames.push(new CharacterFrame(characters.sampaio, new BoardPosition(3, 0)));
-        this.characterFrames.push(new CharacterFrame(characters.vitor, new BoardPosition(4, 0)));
+        this.characterFrames.push(new CharacterFrame(characters.bulcao, new BoardCoordinates(0, 0)));
+        this.characterFrames.push(new CharacterFrame(characters.khaue, new BoardCoordinates(1, 0)));
+        this.characterFrames.push(new CharacterFrame(characters.marcelo, new BoardCoordinates(2, 0)));
+        this.characterFrames.push(new CharacterFrame(characters.sampaio, new BoardCoordinates(0, 1)));
+        this.characterFrames.push(new CharacterFrame(characters.vitor, new BoardCoordinates(1, 1)));
+        this.characterFrames.push(new CharacterFrame(characters.gustavo, new BoardCoordinates(2, 1)));
     },
 
     chooseRandomFace: function () {
-        this.misteryFace = this.characterFrames[this.getRandomInt(0, 4)].character;
+        this.misteryFace = this.characterFrames[MathHelper.getRandomInt(0, this.characterFrames.length - 1)].character;
     },
-
-    getRandomInt(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
 };
 
 module.exports = Board;

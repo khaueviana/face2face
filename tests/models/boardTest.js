@@ -7,10 +7,22 @@ describe('Board', function () {
     var board = Object.create(Board).init();
 
     expect(board.characterFrames[0].character.name).to.equal("Bulcão");
+    expect(board.characterFrames[0].boardCoordinates.toString()).to.equal("0,0");
+
     expect(board.characterFrames[1].character.name).to.equal("Khauê");
+    expect(board.characterFrames[1].boardCoordinates.toString()).to.equal("1,0");
+    
     expect(board.characterFrames[2].character.name).to.equal("Marcelo");
+    expect(board.characterFrames[2].boardCoordinates.toString()).to.equal("2,0");
+    
     expect(board.characterFrames[3].character.name).to.equal("Sampaio");
+    expect(board.characterFrames[3].boardCoordinates.toString()).to.equal("0,1");
+    
     expect(board.characterFrames[4].character.name).to.equal("Vítor");
+    expect(board.characterFrames[4].boardCoordinates.toString()).to.equal("1,1");
+    
+    expect(board.characterFrames[5].character.name).to.equal("Gustavo");
+    expect(board.characterFrames[5].boardCoordinates.toString()).to.equal("2,1");    
   });
 
   it('Mistery face should not be equal in both boards all the times', function () {
