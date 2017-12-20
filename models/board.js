@@ -1,10 +1,11 @@
 var CharacterFrame = require('./../models/pieces/characterFrame');
-var BoardPosition = require('./../models/pieces/boardPosition');
-var Bulcao = require("./../models/characters/bulcao");
+var BoardCoordinates = require('./../models/pieces/boardCoordinates');
+var characters = require("./../models/characters/");
+var MathHelper = require("./../helpers/math");
 
 var Board = {
     characterFrames: [],
-    theFace: {},
+    misteryFace: {},
 
     init: function () {
         this.fillCharacterFrames();
@@ -13,22 +14,17 @@ var Board = {
     },
 
     fillCharacterFrames: function () {
-        console.log(Bulcao);
-
-        this.characterFrames.push(new CharacterFrame(Bulcao, new BoardPosition(0, 0)));
-        // this.characterFrames.push(new CharacterFrame(khaue, new BoardPosition(0, 1)));
-        // this.characterFrames.push(new CharacterFrame(marcelo, new BoardPosition(0, 2)));
-        // this.characterFrames.push(new CharacterFrame(sampaio, new BoardPosition(0, 3)));
-        // this.characterFrames.push(new CharacterFrame(vitor, new BoardPosition(0, 4)));
+        this.characterFrames.push(new CharacterFrame(characters.bulcao, new BoardCoordinates(0, 0)));
+        this.characterFrames.push(new CharacterFrame(characters.khaue, new BoardCoordinates(1, 0)));
+        this.characterFrames.push(new CharacterFrame(characters.marcelo, new BoardCoordinates(2, 0)));
+        this.characterFrames.push(new CharacterFrame(characters.sampaio, new BoardCoordinates(0, 1)));
+        this.characterFrames.push(new CharacterFrame(characters.vitor, new BoardCoordinates(1, 1)));
+        this.characterFrames.push(new CharacterFrame(characters.gustavo, new BoardCoordinates(2, 1)));
     },
 
     chooseRandomFace: function () {
-        //this.theFace = this.characterFrames[this.getRandomInt(0, 4)].character;
+        this.misteryFace = this.characterFrames[MathHelper.getRandomInt(0, this.characterFrames.length - 1)].character;
     },
-
-    getRandomInt(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
 };
 
 module.exports = Board;
