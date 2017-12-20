@@ -4,36 +4,58 @@ var router = express.Router();
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
 
-router.get('/', function(req, res, next) {
-  User.find().then(function(user){
+var bcrypt = require('bcrypt');
+var jwt = require('jsonwebtoken');
+
+var loginRequired = require("./../helpers/loginRequired");
+
+router.get('/', loginRequired, function (req, res, next) {
+  User.find().then(function (user) {
     return res.send(user);
-  }).catch(function(e) {
+  }).catch(function (e) {
     return res.sendStatus(404);
   });
 });
 
-router.get('/:id', function(req, res, next) {
-  User.findById(req.params.id).then(function(user) {
+router.get('/:id', function (req, res, next) {
+  User.findById(req.params.id).then(function (user) {
     return res.send(user);
-  }).catch(function(e) {
+  }).catch(function (e) {
     return res.sendStatus(404);
   });
 });
 
-router.post('/', function(req, res, next) {
+router.post('/', function (req, res, next) {
   var user = new User();
   user.username = req.body.username;
   user.email = req.body.email;
-  user.password = req.body.password;
+  user.password = bcrypt.hashSync(req.body.password, 10);
 
-  return user.save().then(function(){
+  return user.save().then(function () {
     return res.sendStatus(200);
-  }).catch(function(e) {
+  }).catch(function (e) {
     return res.sendStatus(404);
   });
 });
 
-router.put('/:id', function(req, res, next) {
+router.post('/signin', function (req, res) {
+  User.findOne({
+    email: req.body.email
+  }, function (err, user) {
+    if (err) throw err;
+    if (!user) {
+      res.status(401).json({ message: 'Authentication failed. User not found.' });
+    } else if (user) {
+      if (!user.comparePassword(req.body.password)) {
+        res.status(401).json({ message: 'Authentication failed. Wrong password.' });
+      } else {
+        return res.json({ token: jwt.sign({ email: user.email, username: user.username, _id: user._id }, 'RESTFULAPIs') });
+      }
+    }
+  });
+});
+
+router.put('/:id', function (req, res, next) {
   var id = req.params.id;
 
   var user = new User();
@@ -42,9 +64,9 @@ router.put('/:id', function(req, res, next) {
   user.email = req.body.email;
   user.password = req.body.password;
 
-  User.findByIdAndUpdate(id, user).then(function(user) {
+  User.findByIdAndUpdate(id, user).then(function (user) {
     return res.send(user);
-  }).catch(function(e) {
+  }).catch(function (e) {
     console.log(e);
     return res.send('Not Found');
   });
