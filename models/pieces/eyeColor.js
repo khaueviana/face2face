@@ -4,3 +4,5 @@ var EyeColor = {
     blue: 2,
     green: 3
 };
+
+module.exports = EyeColor;
