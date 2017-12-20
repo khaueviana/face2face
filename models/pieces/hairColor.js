@@ -5,3 +5,5 @@ var HairColor = {
     red: 3,
     grey: 4
 };
+
+module.exports = HairColor;

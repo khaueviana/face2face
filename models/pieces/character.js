@@ -6,3 +6,5 @@ var Character = {
     eyeColor: -1,
     accessories: []
 };
+
+module.exports = Character;

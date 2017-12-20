@@ -4,3 +4,5 @@ var Accessory = {
     earRings: 2,
     chain: 3
 };
+
+module.exports = Accessory;
