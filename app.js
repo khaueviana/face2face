@@ -32,11 +32,8 @@ mongoose.connect('mongodb://face2face:sohosarrombados@concrete-shard-00-00-tnis6
 
 var userModel = require('./models/user');
 
-var index = require('./routes/index');
-var users = require('./routes/users');
-
-app.use('/', index);
-app.use('/users', users);
+app.use('/', require('./routes/index'));
+app.use('/users', require('./routes/users'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

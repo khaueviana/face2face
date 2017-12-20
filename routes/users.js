@@ -11,21 +11,27 @@ router.get('/', function(req, res, next) {
   }).catch(next);
 });
 
-router.get('/getById', function(req, res, next) {
-  User.findById('5a3a6b8536cb483f78f05677').then(function(user) {
+router.get('/getById/:id', function(req, res, next) {
+  User.findById(req.params.id).then(function(user) {
     return res.send(user);
-  }).catch(next);
+  }).catch(function(e) {
+    console.log(e);
+    return res.send('Not Found');
+  });
 });
 
-router.get('/create', function(req, res, next) {
+router.post('/create', function(req, res, next) {
   var user = new User();
-  user.username = 'Adriano';
-  user.email = 'adriano.bulcao@concrete.com.br';
-  user.password = 'nois';
+  user.username = req.body.username;
+  user.email = req.body.email;
+  user.password = req.body.password;
 
   return user.save().then(function(){
     return res.sendStatus(200);
-  }).catch(next);;
+  }).catch(function(e) {
+    console.log(e);
+    return res.send('Error while creating user.');
+  });
 });
 
 module.exports = router;
