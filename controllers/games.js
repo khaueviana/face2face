@@ -3,6 +3,7 @@ var router = express.Router();
 
 var Game = require('../models/game');
 var User = require('../models/user');
+var Board = require('../models/board');
 
 router.get('/', function(req, res, next) {
     Game.find().then(function(games){
@@ -13,24 +14,27 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/', function(req, res, next) {
+    var game = new Game();
 
-    var idUsuario = '5a3a6b8536cb483f78f05677';
+    var boardOne = Object.create(Board);
+    boardOne.init();
+    
+    var boardTwo = Object.create(Board);
+    boardTwo.init();
+    
+    game.playerOne = {};
+    game.playerOne.userId = req.body.playerOne.id;
+    game.playerOne.board = boardOne;
+    game.playerTwo = {}
+    game.playerTwo.userId = req.body.playerTwo.id;
+    game.playerTwo.board = boardTwo;
         
-    User.findById(idUsuario)
-        .then(function(userDb) {
-            var game = new Game();
-            game.playerOne = {}
-            game.playerTwo = {}
-                
-            game.save().then(function(){
-                return res.sendStatus(200);
-            }).catch(function(e) {
-                return res.sendStatus(500);
-            });
-        })
-        .catch(function(reason){
-            return res.sendStatus(500);
-        });
+    game.save().then(function(){
+        return res.sendStatus(200);
+    }).catch(function(e) {
+        return res.sendStatus(500);
+    });
+        
 });
 
 module.exports = router;

@@ -2,14 +2,15 @@ var mongoose = require('mongoose');
 
 var gameSchema = new mongoose.Schema({    
     playerOne: {
-        userid: Number,
+        userId: { type: String, required: true },
         board: {},
     },
     playerTwo: {
-        userid: Number,
+        userId: { type: String, required: true },
         board: {},
     },
 }, { timestamps: true });
 
-var games = mongoose.model("Game", gameSchema);
-module.exports = games;
+var Game = mongoose.model("Game", gameSchema);
+
+module.exports = Game;
