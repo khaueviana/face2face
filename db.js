@@ -12,11 +12,5 @@ var options = {
 
   var mongoose = require('mongoose');
   mongoose.connect(uri, options);
-
-var userSchema = new mongoose.Schema({
-    username: String,
-    email: String
-}, { collection: 'usercollection' }
-);
  
 module.exports = { Mongoose: mongoose, UserSchema: userSchema }
