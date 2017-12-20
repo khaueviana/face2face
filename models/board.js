@@ -1,10 +1,10 @@
 var CharacterFrame = require('./../models/pieces/characterFrame');
 var BoardPosition = require('./../models/pieces/boardPosition');
-var Bulcao = require("./../models/characters/bulcao");
+var characters = require("./../models/characters/");
 
 var Board = {
     characterFrames: [],
-    theFace: {},
+    misteryFace: {},
 
     init: function () {
         this.fillCharacterFrames();
@@ -13,17 +13,15 @@ var Board = {
     },
 
     fillCharacterFrames: function () {
-        console.log(Bulcao);
-
-        this.characterFrames.push(new CharacterFrame(Bulcao, new BoardPosition(0, 0)));
-        // this.characterFrames.push(new CharacterFrame(khaue, new BoardPosition(0, 1)));
-        // this.characterFrames.push(new CharacterFrame(marcelo, new BoardPosition(0, 2)));
-        // this.characterFrames.push(new CharacterFrame(sampaio, new BoardPosition(0, 3)));
-        // this.characterFrames.push(new CharacterFrame(vitor, new BoardPosition(0, 4)));
+        this.characterFrames.push(new CharacterFrame(characters.bulcao, new BoardPosition(0, 0)));
+        this.characterFrames.push(new CharacterFrame(characters.khaue, new BoardPosition(1, 0)));
+        this.characterFrames.push(new CharacterFrame(characters.marcelo, new BoardPosition(2, 0)));
+        this.characterFrames.push(new CharacterFrame(characters.sampaio, new BoardPosition(3, 0)));
+        this.characterFrames.push(new CharacterFrame(characters.vitor, new BoardPosition(4, 0)));
     },
 
     chooseRandomFace: function () {
-        //this.theFace = this.characterFrames[this.getRandomInt(0, 4)].character;
+        this.misteryFace = this.characterFrames[this.getRandomInt(0, 4)].character;
     },
 
     getRandomInt(min, max) {
