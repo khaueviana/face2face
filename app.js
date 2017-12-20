@@ -4,46 +4,51 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
 var mongoose = require('mongoose');
-
+var jwt = require('jsonwebtoken');
 var app = express();
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-
-//Database
-// var options = {
-//   useMongoClient: true,
-//   autoIndex: false, // Don't build indexes
-//   reconnectTries: Number.MAX_VALUE, // Never stop trying to reconnect
-//   reconnectInterval: 500, // Reconnect every 500ms
-//   poolSize: 10, // Maintain up to 10 socket connections
-//   // If not connected, return errors immediately rather than waiting for reconnect
-//   bufferMaxEntries: 0
-// };
 
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://face2face:sohosarrombados@concrete-shard-00-00-tnis6.mongodb.net:27017,concrete-shard-00-01-tnis6.mongodb.net:27017,concrete-shard-00-02-tnis6.mongodb.net:27017/test?ssl=true&replicaSet=concrete-shard-0&authSource=admin');
 
 var userModel = require('./models/user');
 
-app.use('/', require('./routes/index'));
-app.use('/users', require('./routes/users'));
+app.use(function (req, res, next) {
+
+  if (req.headers && req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+    jwt.verify(req.headers.authorization.split(' ')[1], 'RESTFULAPIs', function (err, decode) {
+
+      if (err) {
+        req.user = undefined;
+      }
+
+      req.user = decode;
+      next();
+
+    })
+  } else {
+    req.user = undefined;
+    next();
+  }
+});
+
+app.use('/', require('./controllers/index'));
+app.use('/users', require('./controllers/users'));
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
