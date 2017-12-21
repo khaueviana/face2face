@@ -7,51 +7,49 @@ var Board = require('../models/board/board');
 
 var loginRequired = require("./../helpers/loginRequired");
 
-router.get('/', function(req, res, next) {
-    Game.find().then(function(games){
+router.get('/', function (req, res, next) {
+    Game.find().then(function (games) {
         return res.send(games);
-    }).catch(function(e) {
+    }).catch(function (e) {
         return res.sendStatus(500);
     });
 });
 
-router.post('/start', loginRequired, function(req, res, next) {
-    var game = new Game();
+router.post('/start', loginRequired, function (req, res, next) {
 
-    var board = Object.create(Board);
-    board.init();
-    
-    Game.findOne({ 'playerTwo' : null}, function(error, game){
-        
-        if(game){
+    Game.findOne({ 'playerTwo': null }, function (error, game) {
+        var board = Object.create(Board);
+        board.init();
+
+        if (game) {
             game.playerTwo = {
-                userId : req.user._id,
-                board :board
+                userId: req.user._id,
+                board: board
             };
-            game.save().then(function(){
+            game.save().then(function () {
                 return res.sendStatus(200);
-            }).catch(function(e) {
+            }).catch(function (e) {
                 return res.sendStatus(500);
             });
-        }else{
+        } else {
 
             var newGame = new Game();
             newGame.playerOne = {
-                userId : req.user._id,
-                board : board
+                userId: req.user._id,
+                board: board
             };
-
-            newGame.save().then(function(){
+            
+            newGame.save().then(function () {
                 return res.sendStatus(200);
-            }).catch(function(e) {
+            }).catch(function (e) {
                 return res.sendStatus(500);
             });
         }
     });
-    
 
-    
-        
+
+
+
 });
 
 module.exports = router;
