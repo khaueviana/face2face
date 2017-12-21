@@ -5,6 +5,8 @@ var Game = require('../models/game');
 var User = require('../models/user');
 var Board = require('../models/board/board');
 
+var loginRequired = require("./../helpers/loginRequired");
+
 router.get('/', function(req, res, next) {
     Game.find().then(function(games){
         return res.send(games);
@@ -13,27 +15,42 @@ router.get('/', function(req, res, next) {
     });
 });
 
-router.post('/', function(req, res, next) {
+router.post('/start', loginRequired, function(req, res, next) {
     var game = new Game();
 
-    var boardOne = Object.create(Board);
-    boardOne.init();
+    var board = Object.create(Board);
+    board.init();
     
-    var boardTwo = Object.create(Board);
-    boardTwo.init();
-    
-    game.playerOne = {};
-    game.playerOne.userId = req.body.playerOne.id;
-    game.playerOne.board = boardOne;
-    game.playerTwo = {}
-    game.playerTwo.userId = req.body.playerTwo.id;
-    game.playerTwo.board = boardTwo;
+    Game.findOne({ 'playerTwo' : null}, function(error, game){
         
-    game.save().then(function(){
-        return res.sendStatus(200);
-    }).catch(function(e) {
-        return res.sendStatus(500);
+        if(game){
+            game.playerTwo = {
+                userId : req.user._id,
+                board :board
+            };
+            game.save().then(function(){
+                return res.sendStatus(200);
+            }).catch(function(e) {
+                return res.sendStatus(500);
+            });
+        }else{
+
+            var newGame = new Game();
+            newGame.playerOne = {
+                userId : req.user._id,
+                board : board
+            };
+
+            newGame.save().then(function(){
+                return res.sendStatus(200);
+            }).catch(function(e) {
+                return res.sendStatus(500);
+            });
+        }
     });
+    
+
+    
         
 });
 
