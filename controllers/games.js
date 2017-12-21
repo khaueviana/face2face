@@ -3,7 +3,7 @@ var router = express.Router();
 
 var Game = require('../models/game');
 var User = require('../models/user');
-var Board = require('../models/board');
+var Board = require('../models/board/board');
 
 router.get('/', function(req, res, next) {
     Game.find().then(function(games){

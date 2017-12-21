@@ -46,7 +46,7 @@ describe('Board', function () {
   it('Flip Sampaio character frame', function () {
     var board = Object.create(Board).init();
     const sampaioCharacterId = 5;
-    var frame = board.characterFrames.find(function (cf) { return cf.character.id === sampaioCharacterId; });    
+    var frame = board.characterFrames.find(function (cf) { return cf.character.id === sampaioCharacterId; });
 
     board.flipCharacterFrame(sampaioCharacterId);
 
@@ -54,6 +54,6 @@ describe('Board', function () {
 
     board.flipCharacterFrame(sampaioCharacterId);
 
-    expect(frame.status).to.equal(FrameStatus.up);    
+    expect(frame.status).to.equal(FrameStatus.up);
   });
 });
