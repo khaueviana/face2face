@@ -21,18 +21,7 @@ router.post('/start', loginRequired, function(req, res, next) {
     var board = Object.create(Board);
     board.init();
     
-<<<<<<< HEAD
     Game.findOne({ 'playerTwo' : null}, function(error, game){
-=======
-    game.playerOne = {
-        userId: req.body.playerOne.id,
-        board: boardOne,
-    };
-    game.playerTwo = {
-        userId: req.body.playerTwo.id,
-        board: boardTwo
-    };
->>>>>>> 7268ca289639d74283b447481955130c33d887a9
         
         if(game){
             game.playerTwo = {
