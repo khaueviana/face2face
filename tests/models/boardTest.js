@@ -2,7 +2,6 @@ var chai = require('chai');
 var expect = chai.expect;
 var Board = require('./../../models/board/board');
 var FrameStatus = require('./../../models/board/frameStatus');
-var ArrayHelper = require('./../../helpers/array');
 
 describe('Board', function () {
   it('Characters must be in correct position', function () {
