@@ -22,12 +22,14 @@ router.post('/', function(req, res, next) {
     var boardTwo = Object.create(Board);
     boardTwo.init();
     
-    game.playerOne = {};
-    game.playerOne.userId = req.body.playerOne.id;
-    game.playerOne.board = boardOne;
-    game.playerTwo = {}
-    game.playerTwo.userId = req.body.playerTwo.id;
-    game.playerTwo.board = boardTwo;
+    game.playerOne = {
+        userId: req.body.playerOne.id,
+        board: boardOne,
+    };
+    game.playerTwo = {
+        userId: req.body.playerTwo.id,
+        board: boardTwo
+    };
         
     game.save().then(function(){
         return res.sendStatus(200);
