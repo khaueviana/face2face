@@ -6,7 +6,7 @@ var gameSchema = new mongoose.Schema({
         board: {},
     },
     playerTwo: {
-        userId: { type: String, required: true },
+        userId: String,
         board: {},
     },
 }, { timestamps: true });
