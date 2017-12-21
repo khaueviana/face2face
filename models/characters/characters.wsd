@@ -1,0 +1,49 @@
+/'
+How to install Plantuml
+Launch VS Code Quick Open (Ctrl+P), paste the following command, and press enter.
+ext install plantuml
+
+For diagrams other than Sequence Diagram, you have to install
+https://graphviz.gitlab.io/_pages/Download/Download_windows.html
+
+Use Alt A + D to preview the diagram.
+'/
+
+@startuml Characters
+class Face {
+
+    +hasBeard
+    +hasHumongousNose
+}
+
+class Hair {
+
+    +length
+    +color
+}
+
+enum Accessory {
+    hat
+    glasses
+    earRings
+    chain
+}
+
+enum Gender{
+    male
+    female
+}
+
+enum EyeColor{
+    black
+    brown
+    blue
+    green
+}
+
+Character *-- Gender
+Character *-- Face
+Character *-- Hair
+Character *-- EyeColor
+Character o-- Accessory
+@enduml
