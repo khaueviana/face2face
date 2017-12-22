@@ -5,8 +5,6 @@ var Game = require('../models/game');
 var User = require('../models/user');
 var Board = require('../models/board/board');
 
-var loginRequired = require("./../helpers/loginRequired");
-
 router.get('/', function (req, res, next) {
     Game.find().then(function (games) {
         return res.send(games);
@@ -15,7 +13,7 @@ router.get('/', function (req, res, next) {
     });
 });
 
-router.post('/start', loginRequired, function (req, res, next) {
+router.post('/start', function (req, res, next) {
 
     Game.findOne({ 'playerTwo': null }, function (error, game) {
         var board = Object.create(Board);
@@ -38,7 +36,7 @@ router.post('/start', loginRequired, function (req, res, next) {
                 userId: req.user._id,
                 board: board
             };
-            
+
             newGame.save().then(function () {
                 return res.sendStatus(200);
             }).catch(function (e) {
@@ -46,10 +44,12 @@ router.post('/start', loginRequired, function (req, res, next) {
             });
         }
     });
+});
 
-
-
-
+router.post('/question', function (req, res, next) {
+    Game.findOne(req.body.filter, function (error, game) {
+            return res.send(game);
+    });
 });
 
 module.exports = router;
