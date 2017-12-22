@@ -5,6 +5,7 @@ var User = require('../models/user');
 
 var bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');
+var cors = require('cors');
 
 router.get('/', function (req, res, next) {
   User.find().then(function (user) {
@@ -35,7 +36,7 @@ router.post('/', function (req, res, next) {
   });
 });
 
-router.post('/signin', function (req, res) {
+router.post('/signin', cors(), function (req, res) {
   User.findOne({
     username: req.body.username
   }, function (err, user) {
