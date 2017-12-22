@@ -48,11 +48,30 @@ describe('Board', function () {
     var frame = board.characterFrames.find(function (cf) { return cf.character.id === sampaioCharacterId; });
 
     board.flipCharacterFrame(sampaioCharacterId);
-
     expect(frame.status).to.equal(FrameStatus.down);
 
     board.flipCharacterFrame(sampaioCharacterId);
-
     expect(frame.status).to.equal(FrameStatus.up);
+  });
+
+  it('Counting board character frames', function () {
+    var boardOne = Object.create(Board).init();
+    var boardTwo = Object.create(Board).init();
+
+    expect(boardOne.characterFrames.length).to.equal(6);
+    expect(boardTwo.characterFrames.length).to.equal(6);
+  });
+
+  it("Check if flipping a character in one board doesn't flip the same character in the other", function () {
+    var boardOne = Object.create(Board).init();
+    var boardTwo = Object.create(Board).init();
+    const sampaioCharacterId = 5;
+    var frameInBoardOne = boardOne.characterFrames.find(function (cf) { return cf.character.id === sampaioCharacterId; });
+    var sameFrameInBoardTwo = boardTwo.characterFrames.find(function (cf) { return cf.character.id === sampaioCharacterId; });
+
+    boardOne.flipCharacterFrame(sampaioCharacterId);
+    
+    expect(frameInBoardOne.status).to.equal(FrameStatus.down);
+    expect(sameFrameInBoardTwo.status).to.equal(FrameStatus.up);
   });
 });

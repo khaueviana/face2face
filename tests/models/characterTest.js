@@ -4,7 +4,7 @@ var sampaio = require('./../../models/characters/sampaio');
 var characteristics = require("./../../models/characters/characteristics/");
 
 describe('Character', function () {
-    it('Sampa is a real chatch!', function () {
+    it('Sampa is a real catch!', function () {
       expect(sampaio.gender).to.equal(characteristics.Gender.male);
       expect(sampaio.face.hasBeard).to.equal(true);
       expect(sampaio.hair.length).to.equal(characteristics.HairLength.short);
