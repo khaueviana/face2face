@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var jwt = require('jsonwebtoken');
+var loginRequired = require('./helpers/loginRequired');
 //var cors = require('cors');
 
 var app = express();
@@ -44,6 +45,8 @@ app.use(function (req, res, next) {
     next();
   }
 });
+
+app.all('*', loginRequired);
 
 app.use('/', require('./controllers/index'));
 app.use('/users', require('./controllers/users'));

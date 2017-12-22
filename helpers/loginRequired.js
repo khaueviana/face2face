@@ -1,4 +1,7 @@
 module.exports = function (req, res, next) {
+
+  if ( req.path.toLowerCase() == '/users/signin') return next();
+
   if (req.user) {
     next();
   } else {
