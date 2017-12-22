@@ -7,21 +7,8 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var jwt = require('jsonwebtoken');
 var loginRequired = require('./helpers/loginRequired');
-var cors = require('cors')
 
 var app = express();
-app.options("*", cors());
-app.use(cors({
-  origin: 'https://face-2-face-ui.herokuapp.com',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  preflightContinue: false,
-  optionsSuccessStatus: 200
-}));
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -52,15 +39,7 @@ app.use(function (req, res, next) {
   }
 });
 
-// app.all('*', loginRequired);
-app.all('*', function(req, res, next) {
-  var origin = req.get('origin'); 
-  res.header('Access-Control-Allow-Origin', origin);
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
-  next();
-});
-
+app.all('*', loginRequired);
 app.use('/', require('./controllers/index'));
 app.use('/users', require('./controllers/users'));
 app.use('/games', require('./controllers/games'));
