@@ -37,7 +37,7 @@ router.post('/', function (req, res, next) {
 
 router.post('/signin', function (req, res) {
   User.findOne({
-    email: req.body.email
+    username: req.body.username
   }, function (err, user) {
     if (err) throw err;
     if (!user) {
