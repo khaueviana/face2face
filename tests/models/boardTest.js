@@ -48,11 +48,9 @@ describe('Board', function () {
     var frame = board.characterFrames.find(function (cf) { return cf.character.id === sampaioCharacterId; });
 
     board.flipCharacterFrame(sampaioCharacterId);
-
     expect(frame.status).to.equal(FrameStatus.down);
 
     board.flipCharacterFrame(sampaioCharacterId);
-
     expect(frame.status).to.equal(FrameStatus.up);
   });
 });
