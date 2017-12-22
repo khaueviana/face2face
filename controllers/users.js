@@ -6,9 +6,7 @@ var User = require('../models/user');
 var bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');
 
-var loginRequired = require("./../helpers/loginRequired");
-
-router.get('/', loginRequired, function (req, res, next) {
+router.get('/', function (req, res, next) {
   User.find().then(function (user) {
     return res.send(user);
   }).catch(function (e) {
@@ -39,7 +37,7 @@ router.post('/', function (req, res, next) {
 
 router.post('/signin', function (req, res) {
   User.findOne({
-    email: req.body.email
+    username: req.body.username
   }, function (err, user) {
     if (err) throw err;
     if (!user) {
