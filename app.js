@@ -10,6 +10,7 @@ var loginRequired = require('./helpers/loginRequired');
 var cors = require('cors')
 
 var app = express();
+app.options("*", cors());
 app.use(cors({
   origin: 'https://face-2-face-ui.herokuapp.com',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
