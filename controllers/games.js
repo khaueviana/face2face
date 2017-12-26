@@ -5,17 +5,17 @@ var Game = require('../models/game');
 var User = require('../models/user');
 var Board = require('../models/board/board');
 
-router.get('/', function (req, res, next) {
-    Game.find().then(function (games) {
+router.get('/', function(req, res, next) {
+    Game.find().then(function(games) {
         return res.send(games);
-    }).catch(function (e) {
+    }).catch(function(e) {
         return res.sendStatus(500);
     });
 });
 
-router.post('/start', function (req, res, next) {
+router.post('/start', function(req, res, next) {
 
-    Game.findOne({ 'playerTwo': null }, function (error, game) {
+    Game.findOne({ 'playerTwo': null }, function(error, game) {
         var board = Object.create(Board);
         board.init();
 
@@ -24,9 +24,9 @@ router.post('/start', function (req, res, next) {
                 userId: req.user._id,
                 board: board
             };
-            game.save().then(function () {
-                return res.sendStatus(200);
-            }).catch(function (e) {
+            game.save().then(function() {
+                return res.send({ player: 'playerTwo', gameId: game.id });
+            }).catch(function(e) {
                 return res.sendStatus(500);
             });
         } else {
@@ -37,9 +37,9 @@ router.post('/start', function (req, res, next) {
                 board: board
             };
 
-            newGame.save().then(function () {
-                return res.sendStatus(200);
-            }).catch(function (e) {
+            newGame.save().then(function(result) {
+                return res.send({ player: 'playerOne', gameId: result.id });
+            }).catch(function(e) {
                 return res.sendStatus(500);
             });
         }
@@ -47,14 +47,14 @@ router.post('/start', function (req, res, next) {
 });
 
 
-router.get('/questions', function (req, res, next) {
-   return res.send(questionsDictionary);
+router.get('/questions', function(req, res, next) {
+    return res.send(questionsDictionary);
 });
 
 // Example: /games/5a3c17ec0863ed309867d640/questions/playerOne/2
-router.get('/:gameid/questions/:player/:questionId', function (req, res, next) {
+router.get('/:gameid/questions/:player/:questionId', function(req, res, next) {
 
-    var question = questionsDictionary.filter(function(q){
+    var question = questionsDictionary.filter(function(q) {
         return q.id == req.params.questionId;
     })[0];
 
@@ -63,28 +63,27 @@ router.get('/:gameid/questions/:player/:questionId', function (req, res, next) {
     var filter = {};
     filter["_id"] = req.params.gameid;
     filter[questionProperty] = question.value;
-    
-    Game.findOne(filter, function (error, game) {
+
+    Game.findOne(filter, function(error, game) {
         var response = {
-            question : question.description,
-            answer : (game != undefined && game != null)
+            question: question.description,
+            answer: (game != undefined && game != null)
         };
         return res.send(response);
     });
 });
 
-var questionsDictionary = [
-    {
-        id : 1,
-        description : 'Has blond hair?',
-        property : 'board.misteryFace.hair.color',
-        value : 2
+var questionsDictionary = [{
+        id: 1,
+        description: 'Has blond hair?',
+        property: 'board.misteryFace.hair.color',
+        value: 2
     },
     {
-        id : 2,
-        description : 'Has grey hair?',
-        property : 'board.misteryFace.hair.color',
-        value : 4
+        id: 2,
+        description: 'Has grey hair?',
+        property: 'board.misteryFace.hair.color',
+        value: 4
     }
 ]
 
