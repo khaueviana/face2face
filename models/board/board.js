@@ -1,7 +1,6 @@
 var CharacterFrame = require('./characterFrame');
-var BoardCoordinates = require('./boardCoordinates');
 var FrameStatus = require('./frameStatus');
-var characters = require("./../../models/characters/");
+var characters = require("./../../models/characters/sets/estrela/");
 var MathHelper = require("./../../helpers/math");
 
 var Board = {
@@ -12,22 +11,21 @@ var Board = {
     },
 
     fillCharacterFrames: function () {
-        this.characterFrames = [
-            new CharacterFrame(characters.bulcao, new BoardCoordinates(0, 0)),
-            new CharacterFrame(characters.khaue, new BoardCoordinates(1, 0)),
-            new CharacterFrame(characters.marcelo, new BoardCoordinates(2, 0)),
-            new CharacterFrame(characters.sampaio, new BoardCoordinates(0, 1)),
-            new CharacterFrame(characters.vitor, new BoardCoordinates(1, 1)),
-            new CharacterFrame(characters.gustavo, new BoardCoordinates(2, 1))
-        ];
+        this.characterFrames = [];
+
+        for (var property in characters) {
+            if (characters.hasOwnProperty(property)) {
+                this.characterFrames.push(new CharacterFrame(characters[property]));
+            }
+        }
     },
 
     chooseMisteryFace: function () {
         this.misteryFace = this.characterFrames[MathHelper.getRandomInt(0, this.characterFrames.length - 1)].character;
     },
 
-    flipCharacterFrame: function (id) {
-        var frame = this.characterFrames.find(function (cf) { return cf.character.id === 5; });
+    flipCharacterFrame: function (characterId) {
+        var frame = this.characterFrames.find(function (cf) { return cf.character.id === characterId; });
 
         frame.status = frame.status == FrameStatus.up ? FrameStatus.down : FrameStatus.up;
     }

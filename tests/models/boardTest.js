@@ -7,23 +7,8 @@ describe('Board', function () {
   it('Characters must be in correct position', function () {
     var board = Object.create(Board).init();
 
-    expect(board.characterFrames[0].character.name).to.equal("Bulcão");
-    expect(board.characterFrames[0].boardCoordinates.toString()).to.equal("0,0");
-
-    expect(board.characterFrames[1].character.name).to.equal("Khauê");
-    expect(board.characterFrames[1].boardCoordinates.toString()).to.equal("1,0");
-
-    expect(board.characterFrames[2].character.name).to.equal("Marcelo");
-    expect(board.characterFrames[2].boardCoordinates.toString()).to.equal("2,0");
-
-    expect(board.characterFrames[3].character.name).to.equal("Sampaio");
-    expect(board.characterFrames[3].boardCoordinates.toString()).to.equal("0,1");
-
-    expect(board.characterFrames[4].character.name).to.equal("Vítor");
-    expect(board.characterFrames[4].boardCoordinates.toString()).to.equal("1,1");
-
-    expect(board.characterFrames[5].character.name).to.equal("Gustavo");
-    expect(board.characterFrames[5].boardCoordinates.toString()).to.equal("2,1");
+    expect(board.characterFrames[0].character.name).to.equal("Alfredo");
+    expect(board.characterFrames[23].character.name).to.equal("Zeca");
   });
 
   it('Mistery face should not be equal in both boards all the times', function () {
@@ -42,15 +27,15 @@ describe('Board', function () {
     console.log("Mistery face collision: " + collision + "%");
   });
 
-  it('Flip Sampaio character frame', function () {
+  it('Flip Ana character frame', function () {
     var board = Object.create(Board).init();
-    const sampaioCharacterId = 5;
-    var frame = board.characterFrames.find(function (cf) { return cf.character.id === sampaioCharacterId; });
+    const anaCharacterId = "CQEJBwwCCAY";
+    var frame = board.characterFrames.find(function (cf) { return cf.character.id === anaCharacterId; });
 
-    board.flipCharacterFrame(sampaioCharacterId);
+    board.flipCharacterFrame(anaCharacterId);
     expect(frame.status).to.equal(FrameStatus.down);
 
-    board.flipCharacterFrame(sampaioCharacterId);
+    board.flipCharacterFrame(anaCharacterId);
     expect(frame.status).to.equal(FrameStatus.up);
   });
 
@@ -58,19 +43,19 @@ describe('Board', function () {
     var boardOne = Object.create(Board).init();
     var boardTwo = Object.create(Board).init();
 
-    expect(boardOne.characterFrames.length).to.equal(6);
-    expect(boardTwo.characterFrames.length).to.equal(6);
+    expect(boardOne.characterFrames.length).to.equal(24);
+    expect(boardTwo.characterFrames.length).to.equal(24);
   });
 
   it("Check if flipping a character in one board doesn't flip the same character in the other", function () {
     var boardOne = Object.create(Board).init();
     var boardTwo = Object.create(Board).init();
-    const sampaioCharacterId = 5;
-    var frameInBoardOne = boardOne.characterFrames.find(function (cf) { return cf.character.id === sampaioCharacterId; });
-    var sameFrameInBoardTwo = boardTwo.characterFrames.find(function (cf) { return cf.character.id === sampaioCharacterId; });
+    const anaCharacterId = "CQEJBwwCCAY";
+    var frameInBoardOne = boardOne.characterFrames.find(function (cf) { return cf.character.id === anaCharacterId; });
+    var sameFrameInBoardTwo = boardTwo.characterFrames.find(function (cf) { return cf.character.id === anaCharacterId; });
 
-    boardOne.flipCharacterFrame(sampaioCharacterId);
-    
+    boardOne.flipCharacterFrame(anaCharacterId);
+
     expect(frameInBoardOne.status).to.equal(FrameStatus.down);
     expect(sameFrameInBoardTwo.status).to.equal(FrameStatus.up);
   });
