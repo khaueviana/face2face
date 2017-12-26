@@ -46,10 +46,46 @@ router.post('/start', function (req, res, next) {
     });
 });
 
-router.post('/question', function (req, res, next) {
-    Game.findOne(req.body.filter, function (error, game) {
-            return res.send(game);
+
+router.get('/questions', function (req, res, next) {
+   return res.send(questionsDictionary);
+});
+
+// Example: /games/5a3c17ec0863ed309867d640/questions/playerOne/2
+router.get('/:gameid/questions/:player/:questionId', function (req, res, next) {
+
+    var question = questionsDictionary.filter(function(q){
+        return q.id == req.params.questionId;
+    })[0];
+
+    var player = req.params.player;
+    var questionProperty = `${player}.${question.property}`;
+    var filter = {};
+    filter["_id"] = req.params.gameid;
+    filter[questionProperty] = question.value;
+    
+    Game.findOne(filter, function (error, game) {
+        var response = {
+            question : question.description,
+            answer : (game != undefined && game != null)
+        };
+        return res.send(response);
     });
 });
+
+var questionsDictionary = [
+    {
+        id : 1,
+        description : 'Has blond hair?',
+        property : 'board.misteryFace.hair.color',
+        value : 2
+    },
+    {
+        id : 2,
+        description : 'Has grey hair?',
+        property : 'board.misteryFace.hair.color',
+        value : 4
+    }
+]
 
 module.exports = router;
