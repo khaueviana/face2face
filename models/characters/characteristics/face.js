@@ -1,6 +1,6 @@
-var Face = function (hasBeard, hasHumongousNose) {
+var Face = function (hasBeard, hasMustache) {
     this.hasBeard = hasBeard;
-    this.hasHumongousNose = hasHumongousNose;
+    this.hasMustache = hasMustache
 };
 
 module.exports = Face;

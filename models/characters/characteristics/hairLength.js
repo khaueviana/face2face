@@ -1,6 +1,7 @@
 var HairLength = {
-    short: 0,
-    long: 1
+    bald: 0,
+    short: 1,
+    long: 2
 };
 
 module.exports = HairLength;
