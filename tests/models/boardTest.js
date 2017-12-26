@@ -24,6 +24,7 @@ describe('Board', function () {
 
       expect(collision).to.not.equal(100);
     }
+    
     console.log("Mistery face collision: " + collision + "%");
   });
 
