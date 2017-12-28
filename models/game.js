@@ -13,12 +13,6 @@ var gameSchema = new mongoose.Schema({
     },
 }, { timestamps: true });
 
-gameSchema.methods.findAll = function() {
-    return Game.find().then(function(games) {
-        return games;
-    });
-}
-
 gameSchema.methods.start = function(userId) {
     return Game.findOne({
         'playerTwo': null
@@ -43,14 +37,12 @@ gameSchema.methods.start = function(userId) {
 
         } else {
 
-            var newGame = new Game();
-
-            newGame.playerOne = {
+            this.playerOne = {
                 userId,
                 board: board
             };
 
-            return newGame.save().then(function(result) {
+            return this.save().then(function(result) {
                 return {
                     player: 'playerOne',
                     gameId: result.id
@@ -63,10 +55,11 @@ gameSchema.methods.start = function(userId) {
 gameSchema.methods.getQuestionFilter = function(args) {
     var question = Question(args.questionId);
     var questionProperty = `${args.player}.${question.property}`;
+
     var filter = {};
     filter["_id"] = args.gameId;
     filter[questionProperty] = question.value;
-    //ToDo: implements a if(Array) to evaluate properties of this kind.
+
     return { filter: filter, description: question.description };
 }
 

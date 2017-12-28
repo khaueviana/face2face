@@ -7,10 +7,10 @@ var Board = require('../models/board/board');
 var Question = require('../models/question');
 
 router.get('/', function(req, res, next) {
-    var game = new Game();
-
-    game.findAll().then(function(games) {
+    Game.find().then(function(games) {
         return res.send(games);
+    }).catch(function(e) {
+        return res.sendStatus(500);
     });
 });
 

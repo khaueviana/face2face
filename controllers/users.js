@@ -3,71 +3,60 @@ var router = express.Router();
 
 var User = require('../models/user');
 
-var bcrypt = require('bcrypt');
-var jwt = require('jsonwebtoken');
-var cors = require('cors');
-
-router.get('/', function (req, res, next) {
-  User.find().then(function (user) {
-    return res.send(user);
-  }).catch(function (e) {
-    return res.sendStatus(404);
-  });
+router.get('/', function(req, res, next) {
+    User.find().then(function(user) {
+        return res.send(user);
+    }).catch(function(e) {
+        return res.sendStatus(404);
+    });
 });
 
-router.get('/:id', function (req, res, next) {
-  User.findById(req.params.id).then(function (user) {
-    return res.send(user);
-  }).catch(function (e) {
-    return res.sendStatus(404);
-  });
+router.get('/:id', function(req, res, next) {
+    User.findById(req.params.id).then(function(user) {
+        return res.send(user);
+    }).catch(function(e) {
+        return res.sendStatus(404);
+    });
 });
 
-router.post('/', function (req, res, next) {
-  var user = new User();
-  user.username = req.body.username;
-  user.email = req.body.email;
-  user.password = bcrypt.hashSync(req.body.password, 10);
+router.post('/', function(req, res, next) {
+    var user = new User();
 
-  return user.save().then(function () {
-    return res.sendStatus(200);
-  }).catch(function (e) {
-    return res.sendStatus(404);
-  });
+    user.insert({
+        username: req.body.username,
+        email: req.body.email,
+        password: req.body.password
+    }).then(function(response) {
+        return response ? res.sendStatus(200) : res.sendStatus(400);
+    });
 });
 
-router.post('/signin', cors(), function (req, res) {
-  User.findOne({
-    username: req.body.username
-  }, function (err, user) {
-    if (err) throw err;
-    if (!user) {
-      res.status(401).json({ message: 'Authentication failed. User not found.' });
-    } else if (user) {
-      if (!user.comparePassword(req.body.password)) {
-        res.status(401).json({ message: 'Authentication failed. Wrong password.' });
-      } else {
-        return res.json({ token: jwt.sign({ email: user.email, username: user.username, _id: user._id }, 'RESTFULAPIs') });
-      }
-    }
-  });
+router.post('/signin', function(req, res) {
+    var user = new User();
+
+    user.signin({
+        username: req.body.username,
+        password: req.body.password
+    }).then(function(response) {
+        if (response.isSuccess) {
+            return res.send(response);
+        } else {
+            return res.status(401).json(response);
+        }
+    })
 });
 
-router.put('/:id', function (req, res, next) {
-  var id = req.params.id;
+router.put('/:id', function(req, res, next) {
+    var user = new User();
 
-  var user = new User();
-  user._id = id;
-  user.username = req.body.username;
-  user.email = req.body.email;
-  user.password = req.body.password;
-
-  User.findByIdAndUpdate(id, user).then(function (user) {
-    return res.send(user);
-  }).catch(function (e) {
-    console.log(e);
-    return res.send('Not Found');
-  });
+    user.update({
+        _id: req.params.id,
+        username: req.body.username,
+        email: req.body.email,
+        password: req.body.password
+    }).then(function(response) {
+        return res.sendStatus(user ? 200 : 404);
+    })
 });
 
 module.exports = router;
