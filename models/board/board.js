@@ -25,9 +25,9 @@ var Board = {
     },
 
     flipCharacterFrame: function (characterId) {
-        var frame = this.characterFrames.find(function (cf) { return cf.character.id === characterId; });
+        const frame = this.characterFrames.find(function (cf) { return cf.character.id === characterId; });
 
-        frame.status = frame.status == FrameStatus.up ? FrameStatus.down : FrameStatus.up;
+        frame.status = frame.status === FrameStatus.up ? FrameStatus.down : FrameStatus.up;
     }
 };
 
