@@ -1,33 +1,81 @@
 "use strict";
 
+const mongoose = require('mongoose');
 const chai = require('chai');
 const expect = chai.expect;
+
 const Game = require('./../../models/game');
 const User = require('./../../models/user');
 const Board = require('./../../models/board/board');
 const ana = require('./../../models/characters/sets/estrela/ana');
-var c13s = require("./../../models/characters/characteristics/");
+const c13s = require("./../../models/characters/characteristics/");
+const Charact = require("./../../models/characters/characteristic");
+const Question = require('./../../models/question');
 
-describe('Game', function () {
-    it('Check if Ana has blue eyes', function () {
-        const game = new Game();
-        const questionFilter = game.getQuestionFilter(1, "playerOne", 17);
+describe('Database integration tests', function () {
+    before(function (done) {
+        mongoose.connect('mongodb://face2face:sohosarrombados@concrete-shard-00-00-tnis6.mongodb.net:27017,concrete-shard-00-01-tnis6.mongodb.net:27017,concrete-shard-00-02-tnis6.mongodb.net:27017/face2faceTest?ssl=true&replicaSet=concrete-shard-0&authSource=admin', { useMongoClient: true });
+        mongoose.Promise = global.Promise;
 
-        expect(questionFilter.filter._id).to.equal(1);
-        expect(questionFilter.description).to.equal("Has blue eyes?");
-        expect(questionFilter.filter.hasOwnProperty("playerOne.board.misteryFace.eyeColor")).to.equal(true);
+        const db = mongoose.connection;
 
-        game.playerOne = new User();
-        game.playerOne.board = Object.create(Board).init();
-        game.playerOne.board.misteryFace = ana;
+        db.on('error', console.error.bind(console, 'connection error'));
 
-        Game.findOne(questionFilter.filter, function (error, foundGame) {
-            console.log(foundGame);
-            var response = {
-                question: questionFilter.description,
-                answer: (foundGame != undefined && foundGame != null)
-            };
-            console.log(response);            
+        db.once('open', function () {
+            console.log(`Connected to test database (${db.name})!`);
+            done();
+        });
+    });
+
+    describe('Test game collection', function () {
+        var gameId = 0;
+
+        it('New game saved to test database', function (done) {
+            var game = new Game();
+            var user = new User();
+
+            game.playerOne = user;
+            game.playerOne.userId = user._id;
+            game.playerOne.board = Object.create(Board).init();
+            game.playerOne.board.misteryFace = ana;
+            gameId = game._id;
+
+            game.save(done);
+        });
+
+        it('Find game by id', function (done) {
+            Game.findById(gameId).then(function (game) {
+                expect(game.playerOne.board.misteryFace.name).to.equal("Ana");
+                done();
+            });
+        });
+
+        it('Find game by filter', function (done) {
+            const game = new Game();
+            const questionArgs = { gameId: gameId, player: "playerOne", questionId: Charact.brownEyes };
+            const questionFilter = game.getQuestionFilter(questionArgs);
+
+            Game.findOne(questionFilter.filter).then(function (foundGame) {
+                expect(foundGame.playerOne.board.misteryFace.eyeColor).to.equal(c13s.EyeColor.brown);
+                done();
+            });
+        });
+
+        it('Find game by question', function () {
+            const game = new Game();
+            const questionArgs = { gameId: gameId, player: "playerOne", questionId: Charact.brownEyes };
+
+            game.question(questionArgs).then(function (response) {
+                expect(response.question).to.equal(Question(Charact.brownEyes).description);
+                expect(response.answer).to.equal(true);
+            });
+        });
+    });
+
+    after(function (done) {
+        mongoose.connection.db.dropDatabase(function () {
+            console.log("Test database dropped!");
+            mongoose.connection.close(done);
         });
     });
 });
