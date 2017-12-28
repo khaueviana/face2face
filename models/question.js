@@ -1,10 +1,9 @@
 const c13s = require("./characters/characteristics/");
 
-module.exports = function (id) {
+module.exports = function(id) {
     const propertyPrefix = 'board.misteryFace.';
 
-    const questions = [
-        {
+    const questions = [{
             id: 1,
             description: "It's a man?",
             property: "gender",
@@ -140,5 +139,10 @@ module.exports = function (id) {
 
     questions.forEach(question => question.property = propertyPrefix + question.property)
 
-    return questions.find(question => question.id === id);
+    if (id) {
+        return questions.find(question => question.id === parseInt(id));
+    } else {
+        return questions;
+    }
+
 };

@@ -6,61 +6,48 @@ var User = require('../models/user');
 var Board = require('../models/board/board');
 var Question = require('../models/question');
 
-router.get('/', function (req, res, next) {
-    Game.find().then(function (games) {
+router.get('/', function(req, res, next) {
+    var game = new Game();
+
+    game.findAll().then(function(games) {
         return res.send(games);
-    }).catch(function (e) {
+    });
+});
+
+router.post('/start', function(req, res, next) {
+    var game = new Game();
+
+    game.start(req.user._id).then(function(game) {
+        return res.send(game);
+    });
+});
+
+router.get('/questions', function(req, res, next) {
+    return res.send(Question());
+});
+
+router.post('/tipoff', function(req, res, next) {
+    var game = new Game();
+
+    game.tipOff({
+        gameId: req.body.gameId,
+        player: req.body.player,
+        characterId: req.body.characterId
+    }).then(function(response) {
+        return res.send(response);
+    }).catch(function(err) {
         return res.sendStatus(500);
     });
 });
 
-router.post('/start', function (req, res, next) {
+router.get('/:gameId/questions/:player/:questionId', function(req, res, next) {
+    var game = new Game();
 
-    Game.findOne({ 'playerTwo': null }, function (error, game) {
-        var board = Object.create(Board);
-        board.init();
-
-        if (game) {
-            game.playerTwo = {
-                userId: req.user._id,
-                board: board
-            };
-            game.save().then(function () {
-                return res.send({ player: 'playerTwo', gameId: game.id });
-            }).catch(function (e) {
-                return res.sendStatus(500);
-            });
-        } else {
-
-            var newGame = new Game();
-            newGame.playerOne = {
-                userId: req.user._id,
-                board: board
-            };
-
-            newGame.save().then(function (result) {
-                return res.send({ player: 'playerOne', gameId: result.id });
-            }).catch(function (e) {
-                return res.sendStatus(500);
-            });
-        }
-    });
-});
-
-
-router.get('/questions', function (req, res, next) {
-    return res.send(Question.questions);
-});
-
-// Example: /games/5a3c17ec0863ed309867d640/questions/playerOne/2
-router.get('/:gameid/questions/:player/:questionId', function (req, res, next) {
-    const questionFilter = Game.getQuestionFilter();
-
-    Game.findOne(questionFilter.filter, function (error, game) {
-        var response = {
-            question: questionFilter.description,
-            answer: (game != undefined && game != null)
-        };
+    game.question({
+        gameId: req.params.gameId,
+        player: req.params.player,
+        questionId: req.params.questionId
+    }).then(function(response) {
         return res.send(response);
     });
 });
