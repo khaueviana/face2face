@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Question = require('./question');
 const Board = require('./board/board');
+const FrameStatus = require('./board/frameStatus');
 
 var gameSchema = new mongoose.Schema({
     playerOne: {
@@ -79,10 +80,26 @@ gameSchema.methods.question = function(args) {
 
 gameSchema.methods.tipOff = function(args) {
     return Game.findById(args.gameId).then(function(game) {
-        if (args.player === "playerOne") {
-            return game.playerTwo.board.misteryFace.id === args.characterId;
+        return game[args.player].board.misteryFace.id === args.characterId;
+    });
+}
+
+gameSchema.methods.flip = function(args) {
+
+    return Game.findById(args.gameId).then(function(game) {
+
+        const frame = game[args.player].board.characterFrames.find(function(cf) {
+            return cf.character.id === parseInt(args.characterId);
+        });
+
+        if (frame) {
+            frame.status = frame.status === FrameStatus.up ? FrameStatus.down : FrameStatus.up;
+
+            return game.save().then(function(result) {
+                return result;
+            });
         } else {
-            return game.playerOne.board.misteryFace.id === args.characterId;
+            return false;
         }
     });
 }

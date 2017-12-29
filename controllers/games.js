@@ -55,4 +55,16 @@ router.get('/:gameId/questions/:player/:questionId', function(req, res, next) {
     });
 });
 
+router.post('/flip', function(req, res, next) {
+    var game = new Game();
+
+    game.flip({
+        gameId: req.body.gameId,
+        characterId: req.body.characterId,
+        player: req.body.player
+    }).then(function(result) {
+        return res.send(result);
+    });
+});
+
 module.exports = router;
