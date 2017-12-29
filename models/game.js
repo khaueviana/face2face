@@ -15,34 +15,26 @@ var gameSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 gameSchema.methods.start = function(userId) {
-    return Game.findOne({
-        'playerTwo': null
-    }).then(function(game) {
-
+    return Game.findOne({'playerTwo': null})
+    .then(game => {
         var board = Object.create(Board);
         board.init();
-
         if (game) {
-
             game.playerTwo = {
                 userId,
                 board: board
             };
-
             return game.save().then(function() {
                 return {
                     player: 'playerTwo',
                     gameId: game.id
                 };
             });
-
         } else {
-
             this.playerOne = {
                 userId,
                 board: board
             };
-
             return this.save().then(function(result) {
                 return {
                     player: 'playerOne',
@@ -50,7 +42,8 @@ gameSchema.methods.start = function(userId) {
                 };
             });
         }
-    });
+    }, 
+    error => { throw error; });
 }
 
 gameSchema.methods.getQuestionFilter = function(args) {

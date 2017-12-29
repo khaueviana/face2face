@@ -16,10 +16,9 @@ router.get('/', function(req, res, next) {
 
 router.post('/start', function(req, res, next) {
     var game = new Game();
-
-    game.start(req.user._id).then(function(game) {
-        return res.send(game);
-    });
+    game.start(req.user._id)
+    .then( game => res.send(game))
+    .catch(error => res.status(500).json({message : error.message, stack : error.stack}));    
 });
 
 router.get('/questions', function(req, res, next) {
