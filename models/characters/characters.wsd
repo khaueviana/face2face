@@ -25,7 +25,7 @@ class Hair {
 enum Accessory {
     hat
     glasses
-    earRings
+    earrings
     chain
 }
 

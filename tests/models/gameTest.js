@@ -14,7 +14,14 @@ const Question = require('./../../models/question');
 
 describe('Database integration tests', function () {
     before(function (done) {
-        mongoose.connect('mongodb://face2face:sohosarrombados@concrete-shard-00-00-tnis6.mongodb.net:27017,concrete-shard-00-01-tnis6.mongodb.net:27017,concrete-shard-00-02-tnis6.mongodb.net:27017/face2faceTest?ssl=true&replicaSet=concrete-shard-0&authSource=admin', { useMongoClient: true });
+        const credentials = "face2face:sohosarrombados";
+        const host1 = "concrete-shard-00-00-tnis6.mongodb.net:27017"
+        const host2 = "concrete-shard-00-01-tnis6.mongodb.net:27017";
+        const host3 = "concrete-shard-00-02-tnis6.mongodb.net:27017";
+        const databaseName = "face2faceTest";
+        const options = "ssl=true&replicaSet=concrete-shard-0&authSource=admin";
+
+        mongoose.connect(`mongodb://${credentials}@${host1},${host2},${host3}/${databaseName}?${options}`, { useMongoClient: true });
         mongoose.Promise = global.Promise;
 
         const db = mongoose.connection;
@@ -61,15 +68,38 @@ describe('Database integration tests', function () {
             });
         });
 
-        it('Find game by question', function () {
+        it('Find game by question', function (done) {
             const game = new Game();
             const questionArgs = { gameId: gameId, player: "playerOne", questionId: Charact.brownEyes };
 
             game.question(questionArgs).then(function (response) {
                 expect(response.question).to.equal(Question(Charact.brownEyes).description);
                 expect(response.answer).to.equal(true);
+                done(); 
             });
         });
+
+        it('Find game by a question that is an accessory', function (done) {
+            const game = new Game();
+            const questionArgs = { gameId: gameId, player: "playerOne", questionId: Charact.earrings };
+
+            game.question(questionArgs).then(function (response) {
+                expect(response.question).to.equal(Question(Charact.earrings).description);
+                expect(response.answer).to.equal(true);
+                done();
+            });
+        });
+
+        it("Don't find game if asked a wrong question", function (done) {
+            const game = new Game();
+            const questionArgs = { gameId: gameId, player: "playerOne", questionId: Charact.brownHair };
+
+            game.question(questionArgs).then(function (response) {
+                expect(response.question).to.equal(Question(Charact.brownHair).description);
+                expect(response.answer).to.equal(false);
+                done();
+            });
+        });           
     });
 
     after(function (done) {

@@ -123,7 +123,7 @@ module.exports = function (id) {
             id: Charact.earrings,
             description: 'Is wearing earrings?',
             property: 'accessories',
-            value: c13s.Accessory.earRings
+            value: c13s.Accessory.earrings
         },
         {
             id: Charact.glasses,
