@@ -60,8 +60,7 @@ gameSchema.methods.getQuestionFilter = function(args) {
 gameSchema.methods.question = function(args) {
     const questionFilter = gameSchema.methods.getQuestionFilter(args);
 
-    return Game.findOne(questionFilter.filter)
-    .then((response) => {
+    return Game.findOne(questionFilter.filter).then((response) => {
         return {
             question: questionFilter.description,
             answer: (response != undefined && response != null)
@@ -78,9 +77,7 @@ gameSchema.methods.tipOff = function(args) {
 }
 
 gameSchema.methods.flip = function(args) {
-
     return Game.findById(args.gameId).then(function(game) {
-
         const frame = game[args.player].board.characterFrames.find(function(cf) {
             return cf.character.id === parseInt(args.characterId);
         });
