@@ -66,12 +66,14 @@ gameSchema.methods.getQuestionFilter = function(args) {
 gameSchema.methods.question = function(args) {
     const questionFilter = gameSchema.methods.getQuestionFilter(args);
 
-    return Game.findOne(questionFilter.filter).then(function(game) {
-        var response = {
+    return Game.findOne(questionFilter.filter)
+    .then((response) => {
+        return {
             question: questionFilter.description,
-            answer: (game != undefined && game != null)
+            answer: (response != undefined && response != null)
         };
-        return response;
+    }, (error) => {
+        throw error;
     });
 }
 

@@ -47,8 +47,11 @@ router.get('/:gameId/questions/:player/:questionId', function(req, res, next) {
         gameId: req.params.gameId,
         player: req.params.player,
         questionId: req.params.questionId
-    }).then(function(response) {
-        return res.send(response);
+    }).then(response => {
+        res.send(response);
+    }, (errorResponse) => {
+        console.log(errorResponse);
+        res.status(500).json({ message: errorResponse.message, stack: errorResponse.stack });
     });
 });
 
