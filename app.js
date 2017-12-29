@@ -46,6 +46,7 @@ app.all('*', loginRequired);
 app.use('/', require('./controllers/index'));
 app.use('/users', require('./controllers/users'));
 app.use('/games', require('./controllers/games'));
+app.use('/sentiment', require('./controllers/sentiment'));
 
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
