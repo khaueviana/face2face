@@ -20,27 +20,11 @@ gameSchema.methods.start = function(userId) {
         var board = Object.create(Board);
         board.init();
         if (game) {
-            game.playerTwo = {
-                userId,
-                board: board
-            };
-            return game.save().then(function() {
-                return {
-                    player: 'playerTwo',
-                    gameId: game.id
-                };
-            });
+            game.playerTwo = {userId, board: board};
+            return game.save().then(result => buildGameResponse(result, false));
         } else {
-            this.playerOne = {
-                userId,
-                board: board
-            };
-            return this.save().then(function(result) {
-                return {
-                    player: 'playerOne',
-                    gameId: result.id
-                };
-            });
+            this.playerOne = { userId, board: board };
+            return this.save().then(result => buildGameResponse(result));
         }
     }, 
     error => { throw error; });
@@ -92,6 +76,15 @@ gameSchema.methods.flip = function(args) {
             return false;
         }
     });
+}
+
+function buildGameResponse(game, isPlayerOne = true)
+{
+    return { 
+        'gameId' : game.id, 
+        'player' : (isPlayerOne)? game.playerOne : game.playerTwo, 
+        'isPlayerOne' : isPlayerOne 
+    };
 }
 
 var Game = mongoose.model("Game", gameSchema);
