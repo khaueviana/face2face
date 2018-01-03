@@ -63,7 +63,7 @@ gameSchema.methods.tipOff = function(args) {
 gameSchema.methods.flip = function(args) {
     return Game.findById(args.gameId).then(function(game) {
         const frame = game[args.player].board.characterFrames.find(function(cf) {
-            return cf.character.id === parseInt(args.characterId);
+            return cf.character.id === args.characterId;
         });
 
         if (frame) {
