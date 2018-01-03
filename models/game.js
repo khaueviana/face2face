@@ -5,7 +5,8 @@ const FrameStatus = require('./board/frameStatus');
 const GameStatus = require('./gameStatus');
 
 var gameSchema = new mongoose.Schema({
-    status: { type: Number },
+    status: { type: Number, required: true },
+    winner: { type: String },
     playerOne: {
         userId: { type: String, required: true },
         board: {},
@@ -106,6 +107,7 @@ gameSchema.methods.tipOff = function (args) {
             var result = game[currentOpponent].board.misteryFace.id === args.characterId;
 
             if (result) {
+                game.winner = game[args.player].userId;
                 game.status = GameStatus.Ended;
             } else {
                 game.status = GameStatus.getNextTurn(args.player);
