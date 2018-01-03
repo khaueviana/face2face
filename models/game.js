@@ -17,6 +17,7 @@ var gameSchema = new mongoose.Schema({
     },
 }, { timestamps: true });
 
+
 var getQuestionFilter = function (args) {
     var question = Question(args.questionId);
 
@@ -31,11 +32,11 @@ var getQuestionFilter = function (args) {
     }
 }
 
-var buildGameResponse = function (game, isPlayerOne = true) {
+var buildGameResponse = function (game, userId) {
     return {
         'gameId': game.id,
-        'player': (isPlayerOne) ? game.playerOne : game.playerTwo,
-        'isPlayerOne': isPlayerOne
+        'player': game.playerOne.userId === userId ? game.playerOne : game.playerTwo,
+        'isPlayerOne': game.playerOne.userId === userId
     };
 }
 
@@ -53,11 +54,11 @@ gameSchema.methods.start = function (userId) {
         if (game) {
             game.playerTwo = { userId, board: board };
             game.status = GameStatus.PlayerOneTurn;
-            return game.save().then(result => buildGameResponse(result, false));
+            return game.save().then(result => { return { 'gameId': result._id }; }).catch(error => { throw error; });
         } else {
             this.status = GameStatus.New;
             this.playerOne = { userId, board: board };
-            return this.save().then(result => buildGameResponse(result));
+            return this.save().then(result => { return { 'gameId': result._id }; }).catch(error => { throw error; });
         }
     }, error => { throw error; });;
 }
@@ -143,6 +144,16 @@ gameSchema.methods.flip = function (args) {
             }
         }
     });
+}
+
+gameSchema.methods.getById = function (id, userId) {
+    return Game
+        .findById(id)
+        .then((game) => {
+            if (!game) return null;
+            return buildGameResponse(game, userId);
+        })
+        .catch((error) => { throw error; });
 }
 
 var Game = mongoose.model("Game", gameSchema);
