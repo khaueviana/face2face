@@ -32,26 +32,38 @@ gameSchema.methods.start = function (userId) {
 
 gameSchema.methods.getQuestionFilter = function (args) {
     var question = Question(args.questionId);
-    var questionProperty = `${args.player}.${question.property}`;
 
-    var filter = {};
-    filter["_id"] = args.gameId;
-    filter[questionProperty] = question.value;
+    if (question) {
+        var questionProperty = `${args.player}.${question.property}`;
 
-    return { filter: filter, description: question.description };
+        var filter = {};
+        filter["_id"] = args.gameId;
+        filter[questionProperty] = question.value;
+
+        return { filter: filter, description: question.description };
+    }
 }
 
 gameSchema.methods.question = function (args) {
-    const questionFilter = gameSchema.methods.getQuestionFilter(args);
+    return new Promise(function (resolve, reject) {
+        const questionFilter = gameSchema.methods.getQuestionFilter(args);
 
-    return Game.findOne(questionFilter.filter).then((response) => {
-        return {
-            question: questionFilter.description,
-            answer: (response != undefined && response != null)
-        };
-    }, (error) => {
-        throw error;
-    });
+        if (questionFilter) {
+            resolve(questionFilter);
+        } else {
+            reject(Error("Question not found"));
+        }
+
+    }).then(function (questionFilter) {
+        return Game.findOne(questionFilter.filter).then((response) => {
+            return {
+                question: questionFilter.description,
+                answer: (response != undefined && response != null)
+            };
+        }, (error) => {
+            throw error;
+        });
+    });;
 }
 
 gameSchema.methods.tipOff = function (args) {
