@@ -32,10 +32,11 @@ router.post('/tipoff', function (req, res, next) {
         gameId: req.body.gameId,
         player: req.body.player,
         characterId: req.body.characterId
-    }).then(function (response) {
-        return res.send(response);
-    }).catch(function (err) {
-        return res.sendStatus(500);
+    }).then(response => {
+        res.send(response);
+    }, (errorResponse) => {
+        console.log(errorResponse);
+        res.status(500).json({ message: errorResponse.message, stack: errorResponse.stack });
     });
 });
 
@@ -61,8 +62,11 @@ router.post('/flip', function (req, res, next) {
         gameId: req.body.gameId,
         characterId: req.body.characterId,
         player: req.body.player
-    }).then(function (result) {
-        return res.send(result);
+    }).then(response => {
+        res.send(response);
+    }, (errorResponse) => {
+        console.log(errorResponse);
+        res.status(500).json({ message: errorResponse.message, stack: errorResponse.stack });
     });
 });
 
