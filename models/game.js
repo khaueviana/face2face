@@ -14,23 +14,23 @@ var gameSchema = new mongoose.Schema({
     },
 }, { timestamps: true });
 
-gameSchema.methods.start = function(userId) {
-    return Game.findOne({'playerTwo': null})
-    .then(game => {
-        var board = Object.create(Board);
-        board.init();
-        if (game) {
-            game.playerTwo = {userId, board: board};
-            return game.save().then(result => buildGameResponse(result, false));
-        } else {
-            this.playerOne = { userId, board: board };
-            return this.save().then(result => buildGameResponse(result));
-        }
-    }, 
-    error => { throw error; });
+gameSchema.methods.start = function (userId) {
+    return Game.findOne({ 'playerTwo': null })
+        .then(game => {
+            var board = Object.create(Board);
+            board.init();
+            if (game) {
+                game.playerTwo = { userId, board: board };
+                return game.save().then(result => buildGameResponse(result, false));
+            } else {
+                this.playerOne = { userId, board: board };
+                return this.save().then(result => buildGameResponse(result));
+            }
+        },
+        error => { throw error; });
 }
 
-gameSchema.methods.getQuestionFilter = function(args) {
+gameSchema.methods.getQuestionFilter = function (args) {
     var question = Question(args.questionId);
     var questionProperty = `${args.player}.${question.property}`;
 
@@ -41,7 +41,7 @@ gameSchema.methods.getQuestionFilter = function(args) {
     return { filter: filter, description: question.description };
 }
 
-gameSchema.methods.question = function(args) {
+gameSchema.methods.question = function (args) {
     const questionFilter = gameSchema.methods.getQuestionFilter(args);
 
     return Game.findOne(questionFilter.filter).then((response) => {
@@ -54,23 +54,27 @@ gameSchema.methods.question = function(args) {
     });
 }
 
-gameSchema.methods.tipOff = function(args) {
-    return Game.findById(args.gameId).then(function(game) {
-        return game[args.player].board.misteryFace.id === args.characterId;
+gameSchema.methods.tipOff = function (args) {
+    return Game.findById(args.gameId).then(function (game) {
+        if (args.player === "playerOne") {
+            return game["playerTwo"].board.misteryFace.id === args.characterId;
+        } else {
+            return game["playerOne"].board.misteryFace.id === args.characterId;
+        }
     });
 }
 
-gameSchema.methods.flip = function(args) {
-    return Game.findById(args.gameId).then(function(game) {
-        const frame = game[args.player].board.characterFrames.find(function(cf) {
+gameSchema.methods.flip = function (args) {
+    return Game.findById(args.gameId).then(function (game) {
+        const frame = game[args.player].board.characterFrames.find(function (cf) {
             return cf.character.id === args.characterId;
         });
 
         if (frame) {
             frame.status = frame.status === FrameStatus.up ? FrameStatus.down : FrameStatus.up;
 
-            return game.save().then(function(result) {
-                return result;
+            return game.save().then(function (result) {
+                return result[args.player];
             });
         } else {
             return false;
@@ -78,12 +82,11 @@ gameSchema.methods.flip = function(args) {
     });
 }
 
-function buildGameResponse(game, isPlayerOne = true)
-{
-    return { 
-        'gameId' : game.id, 
-        'player' : (isPlayerOne)? game.playerOne : game.playerTwo, 
-        'isPlayerOne' : isPlayerOne 
+function buildGameResponse(game, isPlayerOne = true) {
+    return {
+        'gameId': game.id,
+        'player': (isPlayerOne) ? game.playerOne : game.playerTwo,
+        'isPlayerOne': isPlayerOne
     };
 }
 
