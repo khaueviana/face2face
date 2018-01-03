@@ -66,4 +66,12 @@ router.post('/flip', function(req, res, next) {
     });
 });
 
+router.get('/:id', function(req, res, next) {
+    var game = new Game();
+
+    game.getById(req.params.id, req.user._id)
+    .then((game) => { return (game == null)? res.sendStatus(404) : res.send(game); })
+    .catch((error) => { return res.status(500).json(error); });
+});
+
 module.exports = router;
