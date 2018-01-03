@@ -70,7 +70,7 @@ gameSchema.methods.flip = function(args) {
             frame.status = frame.status === FrameStatus.up ? FrameStatus.down : FrameStatus.up;
 
             return game.save().then(function(result) {
-                return result;
+                return result[args.player];
             });
         } else {
             return false;
