@@ -2,8 +2,10 @@ const mongoose = require('mongoose');
 const Question = require('./question');
 const Board = require('./board/board');
 const FrameStatus = require('./board/frameStatus');
+const GameStatus = require('./gameStatus');
 
 var gameSchema = new mongoose.Schema({
+    status: { type: Number },
     playerOne: {
         userId: { type: String, required: true },
         board: {},
@@ -15,19 +17,25 @@ var gameSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 gameSchema.methods.start = function (userId) {
-    return Game.findOne({ 'playerTwo': null })
-        .then(game => {
-            var board = Object.create(Board);
-            board.init();
-            if (game) {
-                game.playerTwo = { userId, board: board };
-                return game.save().then(result => buildGameResponse(result, false));
-            } else {
-                this.playerOne = { userId, board: board };
-                return this.save().then(result => buildGameResponse(result));
-            }
-        },
-        error => { throw error; });
+
+    return Game.count({ 'playerTwo': null, 'playerOne.userId': userId }).then(count => {
+        if (count === 0) {
+            return Game.findOne({ 'playerTwo': null });
+        } else {
+            throw Error("Game can't started");
+        }
+    }).then(game => {
+        var board = Object.create(Board).init();
+
+        if (game) {
+            game.playerTwo = { userId, board: board };
+            return game.save().then(result => buildGameResponse(result, false));
+        } else {
+            this.status = GameStatus.New;
+            this.playerOne = { userId, board: board };
+            return this.save().then(result => buildGameResponse(result));
+        }
+    }, error => { throw error; });;
 }
 
 gameSchema.methods.getQuestionFilter = function (args) {
