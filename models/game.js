@@ -19,12 +19,12 @@ var gameSchema = new mongoose.Schema({
 
 var getQuestionFilter = function (args) {
 
-    var { game, player } = args.gameData;
+    var { game, player, opponent } = args.gameData;
 
     var question = Question(args.questionId);
 
     if (question) {
-        var questionProperty = `${player}.${question.property}`;
+        var questionProperty = `${opponent}.${question.property}`;
 
         var filter = {};
         filter['_id'] = game.id;
