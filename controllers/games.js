@@ -5,6 +5,7 @@ var Game = require('../models/game');
 var User = require('../models/user');
 var Board = require('../models/board/board');
 var Question = require('../models/question');
+var gameHelper = require('../helpers/game');
 
 router.get('/', function (req, res, next) {
     Game.find().then(function (games) {
@@ -25,27 +26,27 @@ router.get('/questions', function (req, res, next) {
     return res.send(Question());
 });
 
-router.post('/tipoff', function (req, res, next) {
+router.post('/tipoff', gameHelper, function (req, res, next) {
     var game = new Game();
 
-    game.tipOff({
-        gameId: req.body.gameId,
-        player: req.body.player,
-        characterId: req.body.characterId
-    }).then(response => {
+    try {
+        var response = game.tipOff({
+            gameData: req.gameData,
+            characterId: req.body.characterId
+        });
+
         res.send(response);
-    }, (errorResponse) => {
-        console.log(errorResponse);
-        res.status(500).json({ message: errorResponse.message, stack: errorResponse.stack });
-    });
+    } catch (error) {
+        res.status(500).json({ message: error.message, stack: error.stack });
+    }
+
 });
 
-router.get('/:gameId/questions/:player/:questionId', function (req, res, next) {
+router.get('/:gameId/questions/:questionId', gameHelper, function (req, res, next) {
     var game = new Game();
 
     game.question({
-        gameId: req.params.gameId,
-        player: req.params.player,
+        gameData: req.gameData,
         questionId: req.params.questionId
     }).then(response => {
         res.send(response);
@@ -55,13 +56,12 @@ router.get('/:gameId/questions/:player/:questionId', function (req, res, next) {
     });
 });
 
-router.post('/flip', function (req, res, next) {
+router.post('/flip', gameHelper, function (req, res, next) {
     var game = new Game();
 
     game.flip({
-        gameId: req.body.gameId,
-        characterId: req.body.characterId,
-        player: req.body.player
+        gameData: req.gameData,
+        characterId: req.body.characterId
     }).then(response => {
         res.send(response);
     }, (errorResponse) => {
@@ -70,12 +70,8 @@ router.post('/flip', function (req, res, next) {
     });
 });
 
-router.get('/:id', function(req, res, next) {
-    var game = new Game();
-
-    game.getById(req.params.id, req.user._id)
-    .then((game) => { return (game == null)? res.sendStatus(404) : res.send(game); })
-    .catch((error) => { return res.status(500).json(error); });
+router.get('/:id', gameHelper, function (req, res, next) {
+    res.send(req.gameData.game.id);
 });
 
 module.exports = router;

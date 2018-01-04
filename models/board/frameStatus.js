@@ -1,6 +1,6 @@
 var FrameStatus = {
-    up: 0,
-    down: 1
+    up: 1,
+    down: 0
 };
 
 module.exports = FrameStatus;

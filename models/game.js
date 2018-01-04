@@ -17,27 +17,21 @@ var gameSchema = new mongoose.Schema({
     },
 }, { timestamps: true });
 
-
 var getQuestionFilter = function (args) {
+
+    var { game, player } = args.gameData;
+
     var question = Question(args.questionId);
 
     if (question) {
-        var questionProperty = `${args.player}.${question.property}`;
+        var questionProperty = `${player}.${question.property}`;
 
         var filter = {};
-        filter['_id'] = args.gameId;
+        filter['_id'] = game.id;
         filter[questionProperty] = question.value;
 
         return { filter: filter, description: question.description };
     }
-}
-
-var buildGameResponse = function (game, userId) {
-    return {
-        'gameId': game.id,
-        'player': game.playerOne.userId === userId ? game.playerOne : game.playerTwo,
-        'isPlayerOne': game.playerOne.userId === userId
-    };
 }
 
 gameSchema.methods.start = function (userId) {
@@ -73,87 +67,79 @@ gameSchema.methods.question = function (args) {
             reject(Error("Question not found"));
         }
     }).then(function (questionFilter) {
-        return Game.findById(args.gameId).then((game) => {
-            if (game.status === GameStatus.Ended) {
-                throw new Error("The game does not exist");
-            } else if (game.status === GameStatus.isTurn(args.player)) {
-                game.status = GameStatus.getNextTurn(args.player);
-                game.save();
 
-                return Game.findOne(questionFilter.filter).then((response) => {
-                    return {
-                        question: questionFilter.description,
-                        answer: (response != undefined && response != null)
-                    };
-                }, (error) => {
-                    throw error;
-                });
+        var { game, player } = args.gameData;
 
-            } else {
-                throw new Error("It's not your turn!");
-            }
-        }, (error) => {
+        if (game.status === GameStatus.Ended) {
+            throw new Error("The game does not exist");
+        } else if (game.status === GameStatus.isTurn(player)) {
+            game.status = GameStatus.getNextTurn(player);
+            game.save();
 
-        });
+            return Game.findOne(questionFilter.filter).then((response) => {
+                return {
+                    question: questionFilter.description,
+                    answer: (response != undefined && response != null)
+                };
+            }, (error) => {
+                throw error;
+            });
+        } else {
+            throw new Error("It's not your turn!");
+        }
 
     });;
 }
 
 gameSchema.methods.tipOff = function (args) {
-    return Game.findById(args.gameId).then(function (game) {
-        if (game.status === GameStatus.Ended) {
-            throw new Error("The game does not exist");
-        } else if (game.status === GameStatus.isTurn(args.player)) {
-            var currentOpponent = args.player === "playerOne" ? "playerTwo" : "playerOne";
-            var result = game[currentOpponent].board.misteryFace.id === args.characterId;
+    var { game, player, opponent } = args.gameData;
 
-            if (result) {
-                game.winner = game[args.player].userId;
-                game.status = GameStatus.Ended;
-            } else {
-                game.status = GameStatus.getNextTurn(args.player);
-            }
+    if (game.status === GameStatus.Ended) {
+        throw new Error("The game does not exist");
+    } else if (game.status === GameStatus.isTurn(player)) {
+        var result = game[opponent].board.misteryFace.id === args.characterId;
 
-            game.save();
-
-            return result;
-
+        if (result) {
+            game.winner = game[player].userId;
+            game.status = GameStatus.Ended;
         } else {
-            throw new Error("It's not your turn!");
+            game.winner = game[opponent].userId;
+            game.status = GameStatus.Ended;
         }
-    });
+
+        game.save();
+
+        return result;
+
+    } else {
+        throw new Error("It's not your turn!");
+    }
 }
 
 gameSchema.methods.flip = function (args) {
-    return Game.findById(args.gameId).then(function (game) {
-        if (game.status === GameStatus.Ended) {
-            throw new Error("The game does not exist");
-        } else {
-            const frame = game[args.player].board.characterFrames.find(function (cf) {
-                return cf.character.id === args.characterId;
+
+    var { game, player } = args.gameData;
+
+    if (game.status === GameStatus.Ended) {
+        throw new Error("The game does not exist");
+    } else {
+        var frame = game[player].board.characterFrames.find(function (cf) {
+            return cf.character.id === args.characterId;
+        });
+
+        if (frame) {
+            frame.status = frame.status === FrameStatus.up ? FrameStatus.down : FrameStatus.up;
+
+            game[player].board.characterFrames[0].status = 20;
+
+            return game.save().then(function (result) {
+                return result[player];
             });
 
-            if (frame) {
-                frame.status = frame.status === FrameStatus.up ? FrameStatus.down : FrameStatus.up;
-
-                return game.save().then(function (result) {
-                    return result[args.player];
-                });
-            } else {
-                return false;
-            }
+        } else {
+            return false;
         }
-    });
-}
-
-gameSchema.methods.getById = function (id, userId) {
-    return Game
-        .findById(id)
-        .then((game) => {
-            if (!game) return null;
-            return buildGameResponse(game, userId);
-        })
-        .catch((error) => { throw error; });
+    }
 }
 
 var Game = mongoose.model("Game", gameSchema);
