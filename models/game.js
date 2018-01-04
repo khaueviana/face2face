@@ -140,6 +140,21 @@ gameSchema.methods.flip = function (args) {
     }
 }
 
+gameSchema.methods.end = function (args) {
+    var { game, player, opponent } = args.gameData;
+
+    if (game.status === GameStatus.Ended) {
+        throw new Error("The game is already ended.");
+    } else {
+        game.winner = game[opponent].userId;
+        game.status = GameStatus.Ended;
+
+        return game.save().then(function (result) {
+            return true;
+        });
+    }
+}
+
 var Game = mongoose.model("Game", gameSchema);
 
 module.exports = Game;

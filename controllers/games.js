@@ -74,4 +74,17 @@ router.get('/:id', gameHelper, function (req, res, next) {
     res.send(req.gameData.game[req.gameData.player]);
 });
 
+router.post('/end', gameHelper, function (req, res, next) {
+    var game = new Game();
+
+    game.end({
+        gameData: req.gameData
+    }).then(response => {
+        res.send(response);
+    }, (errorResponse) => {
+        console.log(errorResponse);
+        res.status(500).json({ message: errorResponse.message, stack: errorResponse.stack });
+    });
+});
+
 module.exports = router;
