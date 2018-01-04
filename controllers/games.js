@@ -71,7 +71,7 @@ router.post('/flip', gameHelper, function (req, res, next) {
 });
 
 router.get('/:id', gameHelper, function (req, res, next) {
-    res.send(req.gameData.game.id);
+    res.send(req.gameData.game[req.gameData.player]);
 });
 
 module.exports = router;

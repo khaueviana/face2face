@@ -130,8 +130,6 @@ gameSchema.methods.flip = function (args) {
         if (frame) {
             frame.status = frame.status === FrameStatus.up ? FrameStatus.down : FrameStatus.up;
 
-            game[player].board.characterFrames[0].status = 20;
-
             return game.save().then(function (result) {
                 return result[player];
             });
